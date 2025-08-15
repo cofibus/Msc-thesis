@@ -1,0 +1,277 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      -->
+<title>subsetting</title>
+<meta name="generator" content="MATLAB 24.2">
+<link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
+<meta name="DC.date" content="2025-08-15">
+<meta name="DC.source" content="subsetting.m">
+<style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style>
+</head>
+<body>
+<div class="content">
+<pre class="codeinput">
+<span class="keyword">function</span> subset()
+    path = <span class="string">'/Users/sabrina/Library/CloudStorage/OneDrive-UniversityofCopenhagen/Transcriptomics Data/Single Cell RNA 2'</span>;
+    labelsFile = [path, <span class="string">'/filtered_neurons_doublets_labels.csv'</span>];
+    barcodesFile = [path, <span class="string">'/filtered_neurons_doublets_barcodes.tsv'</span>];
+    matrixFile = [path, <span class="string">'/filtered_neurons_doublets.csv'</span>];
+    classificationFile = <span class="string">'/Users/sabrina/Library/CloudStorage/OneDrive-UniversityofCopenhagen/Thesis/CCC inference/NC/classification.csv'</span>;
+
+    opts = detectImportOptions(labelsFile);
+    opts = setvartype(opts, <span class="string">'final_cluster_assignment'</span>, <span class="string">'string'</span>);
+    opts = setvartype(opts, <span class="string">'cell_id'</span>, <span class="string">'string'</span>);
+    labels = readtable(labelsFile, opts);
+
+    opts = detectImportOptions(barcodesFile, <span class="string">"FileType"</span>,<span class="string">"text"</span>, <span class="string">'Delimiter'</span>, <span class="string">'\t'</span>);
+    opts = setvartype(opts, <span class="string">'barcode'</span>, <span class="string">'string'</span>);
+    barcodes = readtable(barcodesFile, opts);
+
+    opts = detectImportOptions(classificationFile);
+    opts = setvartype(opts, <span class="string">'final_cluster_assignment'</span>, <span class="string">'string'</span>);
+    opts = setvartype(opts, <span class="string">'cell_type'</span>, <span class="string">'string'</span>);
+    classification = readtable(classificationFile, opts);
+
+    counts = readtable(matrixFile, <span class="string">"NumHeaderLines"</span>, 2);
+
+    idx = ismember(labels.final_cluster_assignment, classification.final_cluster_assignment);
+    counts.Properties.VariableNames(1:3) = {<span class="string">'cell_idx'</span>, <span class="string">'gene_idx'</span>, <span class="string">'value'</span>};
+
+    labels_final = labels(idx, :);
+
+    [unique_class_clusters, ia_class_unique] = unique(classification.final_cluster_assignment, <span class="string">'stable'</span>);
+    cl_to_ct = containers.Map(unique_class_clusters, classification.cell_type(ia_class_unique));
+
+    cell_type_values = strings(height(labels_final), 1);
+    <span class="keyword">for</span> i = 1:height(labels_final)
+        cluster_key = labels_final.final_cluster_assignment(i);
+        <span class="keyword">if</span> isKey(cl_to_ct, cluster_key)
+            cell_type_values(i) = cl_to_ct(cluster_key);
+        <span class="keyword">else</span>
+            cell_type_values(i) = <span class="string">""</span>;
+            disp(<span class="string">'no corresponding cell type'</span>);
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+    labels_final.cell_type = cell_type_values;
+    fprintf(<span class="string">'%d cells before classification filtering.\n'</span>, height(labels));
+    fprintf(<span class="string">'%d cells kept after classification filtering.\n'</span>, height(labels_final));
+
+    barcodes_final = barcodes(idx, :);
+    fprintf(<span class="string">'%d barcodes kept.\n'</span>, height(barcodes_final));
+
+    ind = find(idx);
+
+    idx_counts = ismember(counts.cell_idx, ind);
+    filtered_counts = counts(idx_counts, :);
+    fprintf(<span class="string">'%d non-zero entries kept.\n'</span>, height(filtered_counts));
+
+    [lia, locb] = ismember(filtered_counts.cell_idx, ind);
+
+    <span class="comment">% lia should be all true here, because idx_counts already filtered for members of ind.</span>
+    <span class="comment">% locb will contain the 1-based indices: for each element X in filtered_counts.cell_idx,</span>
+    <span class="comment">% locb will give its position j such that ind(j) == X.</span>
+
+    <span class="keyword">if</span> all(lia)
+        filtered_counts.cell_idx = locb;
+    <span class="keyword">end</span>
+    counts_final = filtered_counts;
+
+    path = <span class="string">'/Users/sabrina/Library/CloudStorage/OneDrive-UniversityofCopenhagen/Thesis/CCC inference/RNA_data_subset'</span>;
+    <span class="keyword">if</span> ~exist(path, <span class="string">'dir'</span>)
+        mkdir(path);
+    <span class="keyword">end</span>
+    output_labels = fullfile(path, <span class="string">'labels_subset.csv'</span>);
+    output_barcodes = fullfile(path, <span class="string">'barcodes.tsv'</span>);
+    output_counts = fullfile(path, <span class="string">'matrix.mtx'</span>);
+
+    writetable(labels_final, output_labels);
+
+    writetable(barcodes_final, output_barcodes, <span class="string">'FileType'</span>, <span class="string">'text'</span>, <span class="string">'Delimiter'</span>, <span class="string">'\t'</span>, <span class="string">'WriteVariableNames'</span>,false);
+
+    fid = fopen(output_counts, <span class="string">'w'</span>);
+    fprintf(fid, <span class="string">'%%%%MatrixMarket matrix coordinate integer general\n'</span>);
+    fprintf(fid, <span class="string">'%d    %d  %d\n'</span>, counts_final{height(counts_final),<span class="string">"gene_idx"</span>}, height(labels_final), height(counts_final));
+    fclose(fid);
+
+    <span class="keyword">if</span> all(ismember({<span class="string">'gene_idx'</span>, <span class="string">'cell_idx'</span>, <span class="string">'value'</span>}, counts_final.Properties.VariableNames))
+        data_to_write = [counts_final.gene_idx, counts_final.cell_idx, counts_final.value];
+        dlmwrite(output_counts, data_to_write, <span class="string">'-append'</span>, <span class="string">'delimiter'</span>, <span class="string">'\t'</span>, <span class="string">'precision'</span>, <span class="string">'%d'</span>);
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre>
+<pre class="codeoutput">28238 cells before classification filtering.
+3126 cells kept after classification filtering.
+3126 barcodes kept.
+7382333 non-zero entries kept.
+</pre>
+<pre class="codeinput">clear
+subset()
+</pre>
+<p class="footer">
+<br>
+<a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2024b</a>
+<br>
+</p>
+</div>
+<!--
+##### SOURCE BEGIN #####
+function subset()
+    path = '/Users/sabrina/Library/CloudStorage/OneDrive-UniversityofCopenhagen/Transcriptomics Data/Single Cell RNA 2';
+    labelsFile = [path, '/filtered_neurons_doublets_labels.csv'];
+    barcodesFile = [path, '/filtered_neurons_doublets_barcodes.tsv'];
+    matrixFile = [path, '/filtered_neurons_doublets.csv'];
+    classificationFile = '/Users/sabrina/Library/CloudStorage/OneDrive-UniversityofCopenhagen/Thesis/CCC inference/NC/classification.csv';
+   
+    opts = detectImportOptions(labelsFile);
+    opts = setvartype(opts, 'final_cluster_assignment', 'string');
+    opts = setvartype(opts, 'cell_id', 'string');
+    labels = readtable(labelsFile, opts);
+    
+    opts = detectImportOptions(barcodesFile, "FileType","text", 'Delimiter', '\t');
+    opts = setvartype(opts, 'barcode', 'string');
+    barcodes = readtable(barcodesFile, opts);
+    
+    opts = detectImportOptions(classificationFile);
+    opts = setvartype(opts, 'final_cluster_assignment', 'string');
+    opts = setvartype(opts, 'cell_type', 'string');
+    classification = readtable(classificationFile, opts);
+    
+    counts = readtable(matrixFile, "NumHeaderLines", 2);
+    
+    idx = ismember(labels.final_cluster_assignment, classification.final_cluster_assignment);
+    counts.Properties.VariableNames(1:3) = {'cell_idx', 'gene_idx', 'value'};
+    
+    labels_final = labels(idx, :);
+    
+    [unique_class_clusters, ia_class_unique] = unique(classification.final_cluster_assignment, 'stable');
+    cl_to_ct = containers.Map(unique_class_clusters, classification.cell_type(ia_class_unique));
+    
+    cell_type_values = strings(height(labels_final), 1);
+    for i = 1:height(labels_final)
+        cluster_key = labels_final.final_cluster_assignment(i);
+        if isKey(cl_to_ct, cluster_key)
+            cell_type_values(i) = cl_to_ct(cluster_key);
+        else
+            cell_type_values(i) = "";
+            disp('no corresponding cell type');
+        end
+    end
+    labels_final.cell_type = cell_type_values;
+    fprintf('%d cells before classification filtering.\n', height(labels));
+    fprintf('%d cells kept after classification filtering.\n', height(labels_final));
+    
+    barcodes_final = barcodes(idx, :);
+    fprintf('%d barcodes kept.\n', height(barcodes_final));
+    
+    ind = find(idx);
+    
+    idx_counts = ismember(counts.cell_idx, ind);
+    filtered_counts = counts(idx_counts, :);
+    fprintf('%d non-zero entries kept.\n', height(filtered_counts));
+    
+    [lia, locb] = ismember(filtered_counts.cell_idx, ind);
+    
+    % lia should be all true here, because idx_counts already filtered for members of ind.
+    % locb will contain the 1-based indices: for each element X in filtered_counts.cell_idx,
+    % locb will give its position j such that ind(j) == X.
+    
+    if all(lia)
+        filtered_counts.cell_idx = locb;
+    end
+    counts_final = filtered_counts;
+
+    path = '/Users/sabrina/Library/CloudStorage/OneDrive-UniversityofCopenhagen/Thesis/CCC inference/RNA_data_subset';
+    if ~exist(path, 'dir')
+        mkdir(path);
+    end
+    output_labels = fullfile(path, 'labels_subset.csv');
+    output_barcodes = fullfile(path, 'barcodes.tsv');
+    output_counts = fullfile(path, 'matrix.mtx');
+    
+    writetable(labels_final, output_labels);
+    
+    writetable(barcodes_final, output_barcodes, 'FileType', 'text', 'Delimiter', '\t', 'WriteVariableNames',false);
+    
+    fid = fopen(output_counts, 'w');
+    fprintf(fid, '%%%%MatrixMarket matrix coordinate integer general\n');
+    fprintf(fid, '%d    %d  %d\n', counts_final{height(counts_final),"gene_idx"}, height(labels_final), height(counts_final));
+    fclose(fid);
+    
+    if all(ismember({'gene_idx', 'cell_idx', 'value'}, counts_final.Properties.VariableNames))
+        data_to_write = [counts_final.gene_idx, counts_final.cell_idx, counts_final.value];
+        dlmwrite(output_counts, data_to_write, '-append', 'delimiter', '\t', 'precision', '%d');
+    end
+end
+%% 
+clear
+subset()
+##### SOURCE END #####
+-->
+</body>
+</html>
